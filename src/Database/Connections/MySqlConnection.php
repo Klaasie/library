@@ -3,7 +3,7 @@
 use PDO;
 use Illuminate\Database\Schema\MySqlBuilder;
 use Illuminate\Database\Query\Processors\MySqlProcessor;
-use Doctrine\DBAL\Driver\PDOMySql\Driver as DoctrineDriver;
+use Doctrine\DBAL\Driver\PDO\MySQL\Driver as DoctrineDriver;
 use October\Rain\Database\Query\Grammars\MySqlGrammar as QueryGrammar;
 use Illuminate\Database\Schema\Grammars\MySqlGrammar as SchemaGrammar;
 
@@ -56,7 +56,7 @@ class MySqlConnection extends Connection
     /**
      * Get the Doctrine DBAL driver.
      *
-     * @return \Doctrine\DBAL\Driver\PDOMySql\Driver
+     * @return \Doctrine\DBAL\Driver\PDO\MySQL\Driver
      */
     protected function getDoctrineDriver()
     {
