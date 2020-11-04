@@ -2,6 +2,7 @@
 
 use Dotenv\Dotenv;
 use Dotenv\Exception\InvalidPathException;
+use Illuminate\Support\Env;
 use Symfony\Component\Console\Input\ArgvInput;
 use Illuminate\Contracts\Foundation\Application;
 
@@ -18,7 +19,7 @@ class LoadEnvironmentVariables
         $this->checkForSpecificEnvironmentFile($app);
 
         try {
-            DotEnv::create($app->environmentPath(), $app->environmentFile())->load();
+            DotEnv::create(Env::getRepository(), $app->environmentPath(), $app->environmentFile())->load();
         }
         catch (InvalidPathException $e) {
             //
