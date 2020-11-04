@@ -9,6 +9,7 @@ use October\Rain\Exception\AjaxException;
 use ReflectionFunction;
 use Exception;
 use Closure;
+use Throwable;
 
 class Handler extends ExceptionHandler
 {
@@ -37,10 +38,10 @@ class Handler extends ExceptionHandler
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
-     * @param  \Exception  $exception
+     * @param  Throwable $e
      * @return void
      */
-    public function report(Exception $exception)
+    public function report(Throwable $e)
     {
         /**
          * @event exception.beforeReport
@@ -54,16 +55,16 @@ class Handler extends ExceptionHandler
          *         }
          *     });
          */
-        if (Event::fire('exception.beforeReport', [$exception], true) === false) {
+        if (Event::fire('exception.beforeReport', [$e], true) === false) {
             return;
         }
 
-        if ($this->shouldntReport($exception)) {
+        if ($this->shouldntReport($e)) {
             return;
         }
 
         if (class_exists('Log')) {
-            Log::error($exception);
+            Log::error($e);
         }
 
         /**
@@ -76,24 +77,24 @@ class Handler extends ExceptionHandler
          *         app('sentry')->captureException($exception);
          *     });
          */
-        Event::fire('exception.report', [$exception]);
+        Event::fire('exception.report', [$e]);
     }
 
     /**
      * Render an exception into an HTTP response.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $exception
+     * @param  Throwable $e
      * @return \Illuminate\Http\Response
      */
-    public function render($request, Exception $exception)
+    public function render($request, Throwable $e)
     {
         if (!class_exists('Event')) {
-            return parent::render($request, $exception);
+            return parent::render($request, $e);
         }
 
-        $statusCode = $this->getStatusCode($exception);
-        $response = $this->callCustomHandlers($exception);
+        $statusCode = $this->getStatusCode($e);
+        $response = $this->callCustomHandlers($e);
 
         if (!is_null($response)) {
             if ($response instanceof \Symfony\Component\HttpFoundation\Response) {
@@ -103,11 +104,11 @@ class Handler extends ExceptionHandler
             return Response::make($response, $statusCode);
         }
 
-        if ($event = Event::fire('exception.beforeRender', [$exception, $statusCode, $request], true)) {
+        if ($event = Event::fire('exception.beforeRender', [$e, $statusCode, $request], true)) {
             return Response::make($event, $statusCode);
         }
 
-        return parent::render($request, $exception);
+        return parent::render($request, $e);
     }
 
     /**

@@ -101,7 +101,7 @@ class MailerTest extends TestCase
 
     protected function makeMailer()
     {
-        return new Mailer(new FactoryMailerTest, new SwiftMailerTest, new DispatcherMailerTest);
+        return new Mailer('smtp', new FactoryMailerTest, new SwiftMailerTest, new DispatcherMailerTest);
     }
 }
 
