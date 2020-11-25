@@ -2,6 +2,7 @@
 
 use Log;
 use Cache;
+use October\Rain\Database\Traits\Sortable;
 use Storage;
 use File as FileHelper;
 use October\Rain\Network\Http;
@@ -18,7 +19,7 @@ use Exception;
  */
 class File extends Model
 {
-    use \October\Rain\Database\Traits\Sortable;
+    use Sortable;
 
     /**
      * @var string The table associated with the model.
@@ -94,7 +95,7 @@ class File extends Model
 
     /**
      * Creates a file object from a file an uploaded file.
-     * @param Symfony\Component\HttpFoundation\File\UploadedFile $uploadedFile
+     * @param UploadedFile $uploadedFile
      */
     public function fromPost($uploadedFile)
     {
@@ -103,7 +104,7 @@ class File extends Model
         }
 
         $this->file_name = $uploadedFile->getClientOriginalName();
-        $this->file_size = $uploadedFile->getClientSize();
+        $this->file_size = $uploadedFile->getSize();
         $this->content_type = $uploadedFile->getMimeType();
         $this->disk_name = $this->getDiskName();
 
